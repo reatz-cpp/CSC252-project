@@ -1,6 +1,6 @@
 #include "robot.h"
 
-void printBoard(char a[][10], int size)
+void printBoard()
 {
 	//nested loop to print a 2d array
 	for (int i = 0; i < 10; i++)
@@ -88,17 +88,21 @@ bool Robot::moveTo(int lx, int ly)
 	int xSteps = abs(diffInX);
 	int ySteps = abs(diffInY);
 	if (diffInX > 0)
-	{
 		for (int i = 0; i < xSteps; i++)
+		{
 			xLocation--;
-	}
-		
+		}
+					
 	else
-	{
-		for (int i = 0; i < xSteps: i++)
-			xLocation++;
-	}
-		
+		xLocation++;
+
+	if (diffInY > 0)
+		for (int i = 0; i < ySteps; i++)
+		{
+			yLocation--;
+		}
+	else
+		yLocation++;
 
 	return true;
 
@@ -110,7 +114,7 @@ bool Robot::pickUp(int lx, int ly)
 	assert(ly >= 0 && ly < 10);
 	if (board[lx][ly] != '.')//if board is not empty
 	{
-		if (cargoBed = false)
+		if (cargoBed == false)
 		{
 			//move robot to the location and place load in cargobed
 			//make sure to reset the board to empty and cargobed to true
@@ -133,7 +137,7 @@ bool Robot::dropOff(int lx, int ly)
 	assert(ly >= 0 && ly < 10);
 	if (board[lx][ly] = '.')//board is empty)
 	{
-		if (load != 0) //Robot has a load)
+		if (load != '.') //Robot has a load)
 		{
 			//move robot to the location and place load in cargobed
 			//make sure to reset the board to full and cargobed to false
@@ -149,3 +153,5 @@ bool Robot::dropOff(int lx, int ly)
 	cout << "A load is already at board location specified\n";
 	return false;
 }
+
+
