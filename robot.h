@@ -30,7 +30,6 @@ public:
 	bool dropOff(int lx, int ly);
 	
 
-
 private:
 	int xLocation;
 	int yLocation;
@@ -38,6 +37,7 @@ private:
 	char load;
 
 };
+
 
 
 #endif

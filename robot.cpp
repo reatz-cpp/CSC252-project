@@ -1,11 +1,13 @@
 #include "robot.h"
 
-void printBoard()
+
+void print2D(char a[][10], int size)
+
 {
 	//nested loop to print a 2d array
-	for (int i = 0; i < 10; i++)
-		for (int j = 0; j < 10; j++)
-			cout << board[i][j] << endl;
+	for (int i = 0; i < size; i++)
+		for (int j = 0; j < size; j++)
+			cout << a[i][j]  << endl;
 
 }
 
@@ -16,7 +18,7 @@ void clear(char a[][10], int size)
 	for (int i = 0; i < size; i++)
 		for (int j = 0; j < size; j++)
 		{
-			board[i][j];
+			a[i][j];
 			r->pickUp(i, j);
 			//dynamically create a Robot object and place at that cell
 				//use the robot to pick up the load 
@@ -91,19 +93,28 @@ bool Robot::moveTo(int lx, int ly)
 		for (int i = 0; i < xSteps; i++)
 		{
 			xLocation--;
+
 		}
-					
-	else
-		xLocation++;
+
+	else if (diffInX == 0)
+	{
+		for(int i = 0; i <xSteps; i++)
+			xLocation++;
+	}
+		
 
 	if (diffInY > 0)
+	{
 		for (int i = 0; i < ySteps; i++)
-		{
 			yLocation--;
-		}
-	else
-		yLocation++;
+	}
 
+	else if (diffInY == 0)
+	{
+		for (int i = 0; i < ySteps; i++)
+			xLocation++;
+	}
+		
 	return true;
 
 }
@@ -135,7 +146,7 @@ bool Robot::dropOff(int lx, int ly)
 {
 	assert(lx >= 0 && lx < 10);
 	assert(ly >= 0 && ly < 10);
-	if (board[lx][ly] = '.')//board is empty)
+	if (board[lx][ly] == '.')//board is empty)
 	{
 		if (load != '.') //Robot has a load)
 		{
@@ -154,4 +165,11 @@ bool Robot::dropOff(int lx, int ly)
 	return false;
 }
 
+
+ostream& operator<<(ostream& out, const Robot& r)
+{
+	
+	out << r << endl;
+	return out;
+}
 
