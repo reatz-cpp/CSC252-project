@@ -1,33 +1,5 @@
 #include "robot.h"
 
-
-void print2D(char a[][10], int size)
-
-{
-	//nested loop to print a 2d array
-	for (int i = 0; i < size; i++)
-		for (int j = 0; j < size; j++)
-			cout << a[i][j]  << endl;
-
-}
-
-void clear(char a[][10], int size)
-{
-	Robot* r;
-	//use a nested loop to traverse the board and at each cell with a load
-	for (int i = 0; i < size; i++)
-		for (int j = 0; j < size; j++)
-		{
-			a[i][j];
-			r->pickUp(i, j);
-			//dynamically create a Robot object and place at that cell
-				//use the robot to pick up the load 
-			//Now that the cell is clear, return the memory back to system
-		}
-			
-
-}
-
 Robot::Robot()
 {
 	xLocation = 0;
@@ -42,8 +14,7 @@ Robot::Robot(int lx, int ly, bool cargoBed, char load)
 	this->load = load;
 	xLocation = lx;
 	yLocation = ly;
-	board[lx][ly] = 0;
-
+	
 }
 
 int Robot::getLx()
@@ -96,7 +67,7 @@ bool Robot::moveTo(int lx, int ly)
 
 		}
 
-	else if (diffInX == 0)
+	else if (diffInX < 0)
 	{
 		for(int i = 0; i <xSteps; i++)
 			xLocation++;
@@ -109,7 +80,7 @@ bool Robot::moveTo(int lx, int ly)
 			yLocation--;
 	}
 
-	else if (diffInY == 0)
+	else if (diffInY < 0)
 	{
 		for (int i = 0; i < ySteps; i++)
 			xLocation++;
@@ -123,26 +94,31 @@ bool Robot::pickUp(int lx, int ly)
 {
 	assert(lx >= 0 && lx < 10);
 	assert(ly >= 0 && ly < 10);
-	if (board[lx][ly] != '.')//if board is not empty
-	{
-		if (cargoBed == false)
-		{
-			//move robot to the location and place load in cargobed
-			//make sure to reset the board to empty and cargobed to true
-			return true;
-		}
-		else
-		{
-			cout << "Robot has a load already\n";
-			return false;
-		}
+	
+	if (!this->moveTo(lx, ly))
+		return false;
 		
+	if(cargoBed)
+	{
+		cout << "Robot has a load already\n";
+		return false;
 	}
-	cout << "No load at board location specified\n";
-	return false;
+
+	if (board[lx][ly] == '.')
+	{
+		cout << "No load at board location specified\n";
+		return false;
+	}
+		
+
+	load = board[lx][ly];
+	board[lx][ly] = '.';
+	cargoBed = true;
+	return true;
+
 }
 
-bool Robot::dropOff(int lx, int ly)
+/*bool Robot::dropOff(int lx, int ly)
 {
 	assert(lx >= 0 && lx < 10);
 	assert(ly >= 0 && ly < 10);
@@ -163,13 +139,13 @@ bool Robot::dropOff(int lx, int ly)
 	}
 	cout << "A load is already at board location specified\n";
 	return false;
-}
+}*/
 
 
 ostream& operator<<(ostream& out, const Robot& r)
 {
 	
-	out << r << endl;
+	out << r.xLocation << r.yLocation << r.load << endl;
 	return out;
 }
 

@@ -2,9 +2,6 @@
 #define ROBOT_H
 #include <iomanip>
 #include <iostream>
-#include <vector>
-#include <ctime>
-#include <string>
 #include <assert.h>
 
 using namespace std;
@@ -28,7 +25,7 @@ public:
 	bool moveTo(int lx, int ly);
 	bool pickUp(int lx, int ly);
 	bool dropOff(int lx, int ly);
-	
+	friend ostream& operator<<(ostream& out, const Robot& r);
 
 private:
 	int xLocation;
