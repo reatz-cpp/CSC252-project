@@ -4,7 +4,7 @@
 
 using namespace std;
 
-char board[10][10];
+char grid[10][10];
 
 class Robot
 {
@@ -83,101 +83,154 @@ void Robot::setLoad(char load)
 {
 	this->load = load;
 }
+
+
+//function - move robot to location given as parameter
 bool Robot::moveTo(int lx, int ly)
 {
-	assert(lx >= 0 && lx < 10);
-	assert(ly >= 0 && ly < 10);
 
-	int diffInX = xLocation - lx;
-	int diffInY = yLocation - ly;
-	int xSteps = abs(diffInX);
-	int ySteps = abs(diffInY);
-	if (diffInX > 0)
-		for (int i = 0; i < xSteps; i++)
+	//verifies location is in grid
+	if (lx < 0 || ly < 0 || lx >= 10 || ly >= 10)
+	{
+		return false;
+	}
+
+	//determines horizontal direction
+	if (this->xLocation < lx)
+	{
+
+		//move right on x-axis
+		while (lx != this->xLocation)
 		{
-			xLocation--;
-
+			this->xLocation++;
 		}
 
-	else if (diffInX < 0)
-	{
-		for (int i = 0; i < xSteps; i++)
-			xLocation++;
 	}
 
+	//determines horizontal direction
+	if (this->xLocation > lx)
 
-	if (diffInY > 0)
 	{
-		for (int i = 0; i < ySteps; i++)
-			yLocation--;
+
+		//move left on x-axis
+		while (lx != this->xLocation)
+
+		{
+			this->xLocation--;
+		}
+
 	}
 
-	else if (diffInY < 0)
+	//determines vertical direction
+	if (this->yLocation < ly)
+
 	{
-		for (int i = 0; i < ySteps; i++)
-			xLocation++;
+
+		//move up on x-axis
+		while (ly != this->yLocation)
+
+		{
+			this->yLocation++;
+		}
+
+	}
+
+	//determines vertical direction
+	if (this->yLocation > ly)
+
+	{
+
+		//move down on y-axis
+		while (ly != this->yLocation)
+
+		{
+			this->yLocation--;
+		}
+
 	}
 
 	return true;
 
 }
 
+
+
+
+//function - pickup load and bool cargobed
 bool Robot::pickUp(int lx, int ly)
 {
-	assert(lx >= 0 && lx < 10);
-	assert(ly >= 0 && ly < 10);
 
-	if (!this->moveTo(lx, ly))
+	//verify robot at pickup loaction, moves if not    
+	if (this->xLocation != lx || this->yLocation != ly)
+	{
+		moveTo(lx, ly);
+	}
+
+
+	//verify a char is at pickup location
+	if (grid[xLocation][yLocation] == '.')
+	{
 		return false;
+	}
 
+	//if cargobed is full (true), can't pickup another char
 	if (cargoBed)
 	{
-		cout << "Robot has a load already\n";
-		return false;
-	}
-
-	if (board[lx][ly] == '.')
-	{
-		cout << "No load at board location specified\n";
 		return false;
 	}
 
 
-	load = board[lx][ly];
-	board[lx][ly] = '.';
+	//fill cargo bed (true)
 	cargoBed = true;
+
+	//update load with char
+	load = grid[xLocation][yLocation];
+
+	//reset grid location to empty(.)
+	grid[xLocation][yLocation] = '.';
+
+
+
 	return true;
 
 }
 
-/*bool Robot::dropOff(int lx, int ly)
+//function - dropoff char in load at a spot on grid
+bool Robot::dropOff(int lx, int ly)
 {
-	assert(lx >= 0 && lx < 10);
-	assert(ly >= 0 && ly < 10);
-	if (board[lx][ly] == '.')//board is empty)
-	{
-		if (load != '.') //Robot has a load)
-		{
-			//move robot to the location and place load in cargobed
-			//make sure to reset the board to full and cargobed to false
-			return true;
-		}
-		else
-		{
-			cout << "Robot has no load to drop off\n";
-			return false;
-		}
 
+	//verify robot at dropoff loaction, moves if not     
+	if (this->xLocation != lx || this->yLocation != ly)
+	{
+		moveTo(lx, ly);
 	}
-	cout << "A load is already at board location specified\n";
-	return false;
-}*/
+
+
+	//Can't drop load, char already at grid location
+	if (grid[xLocation][yLocation] != '.')
+	{
+		return false;
+	}
+
+	//set grid loaction to dropped load
+	grid[xLocation][yLocation] = load;
+
+	//set load on robot to empty (.)
+	load = '.';
+
+	//reset cargobed to empty (false)
+	cargoBed = false;
+
+	return true;
+
+}
+
 
 
 ostream& operator<<(ostream& out, const Robot& r)
 {
 
-	out << r.xLocation << r.yLocation << r.load << endl;
+	out << " at (" <<r.xLocation << ", " << r.yLocation << ") with load: " << r.load << endl;
 	return out;
 }
 
@@ -185,7 +238,7 @@ ostream& operator<<(ostream& out, const Robot& r)
 
 void print2D(char a[][10])
 {
-	cout << "The grid is : ";
+	cout << "The grid is : " << endl;
 	for (int i = 0; i < 10; i++)
 	{
 		for (int j = 0; j < 10; j++)
@@ -200,33 +253,62 @@ void print2D(char a[][10])
 
 }
 
-/*void clear(char a[][10], int size)
+//function - reset grid
+void clear(char grid[10][10])
 {
-	Robot* r;
-	//use a nested loop to traverse the board and at each cell with a load
-	for (int i = 0; i < size; i++)
-		for (int j = 0; j < size; j++)
+
+	for (int i = 0; i < 10; i++)
+	{
+
+		for (int j = 0; j < 10; j++)
 		{
-			a[i][j];
-			//r->pickUp(i, j);
-			//dynamically create a Robot object and place at that cell
-				//use the robot to pick up the load 
-			//Now that the cell is clear, return the memory back to system
+
+			if (grid[i][j] != '.')
+			{
+
+				Robot* temporary = new Robot(i, j, false, '.');
+
+				temporary->pickUp(i, j);
+
+				delete temporary;
+
+			}
+
 		}
 
+	}
 
-}*/
+}
+
+
+
 
 
 int main()
 {
 	
 	
+	//initializing 2d array
 
-	board[3][8] = 'B';
-	board[2][6] = 'C';
+	for (int i = 0; i < 10; i++)
 
-	print2D(board);
+	{
+
+		for (int j = 0; j < 10; j++)
+
+		{
+
+			grid[i][j] = '.';
+
+		}
+
+	}
+
+
+	grid[3][8] = 'B';
+	grid[2][6] = 'C';
+
+	print2D(grid);
 	
 	int x1 = rand() % 10;
 	int x2 = rand() % 10;
@@ -236,12 +318,33 @@ int main()
 	Robot R1(x1, y1, false, '.');
 	Robot R2(x2, y2, false, '.');
 
-	cout << "Robot R1 " << R1 << "\n";
+	cout << "Robot R1 " << R1 << endl;
 	cout << "Robot R2: " << R2 << endl;
 
+	R1.moveTo(9, 2);
+	R2.moveTo(3, 4);
 
+	cout << "Robot R1: " << R1 << endl;
+	cout << "Robot R2: " << R2 << endl;
+	print2D(grid);
 
-			
+	R1.pickUp(3, 8);
+	R1.dropOff(9, 9);
 
+	cout << "Robot R1: " << R1 << endl;
+	print2D(grid);
+
+	R2.pickUp(2, 6);
+	R2.dropOff(0, 0);
+
+	cout << "Robot R2: " << R2 << endl;
+	print2D(grid);
+
+	clear(grid);
+	print2D(grid);
+
+	return 0;
+
+	
 
 }
